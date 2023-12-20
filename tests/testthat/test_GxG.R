@@ -1,14 +1,17 @@
-library(gUtils)
-library(GxG)
 
-## idk testing this is slightly beyond my pay grade
-## GENOME = system.file("extdata", "human_g1k_v37.no.extra.chrom.sizes", package = "GxG")
-## if (nchar(GENOME) == 0) {
-##     download.file("http://mskilab.com/gUtils/hg19/hg19.chrom.sizes", "~/hg19.chrom.sizes")
-##     GENOME="~/hg19.chrom.sizes"
-## }
+
+setDTthreads(1)
+
 GENOME="human_g1k_v37.no.extra.chrom.sizes"
 Sys.setenv(DEFAULT_GENOME = GENOME)
+#file locations for testing interchr
+## interchr_dat = "testing_interchr/hic_data_test.rds"
+## hic_test_file = "testing_interchr/test.hic"
+gmatrix_orig_data = "testing_interchr/gmatrix_before_hic.rds"
+hic_test_file = "testing_interchr/test.hic"
+mcool_test_file = "testing_interchr/test.mcool"
+inter_chr_test_file = "testing_interchr/inter_chr_sim.ecDNA.rds"
+
 
 test_that("test .hic", {
     suppressWarnings({
@@ -32,9 +35,21 @@ test_that("test .hic", {
 
         ## test disjoin
         new.ranges = gr.tile(gm$footprint, 2e5)
-        gmd = gm$disjoin(new.ranges)
+        gmd = gm$disjoin(new.ranges) ###########this breaks
         expect_true(inherits(gm, "gMatrix"))
         expect_true(length(gmd$gr) >= length(new.ranges))
+
+        ## test whether reading in mcool and .hic matches the original data used to create them
+        orig_dat = readRDS(gmatrix_orig_data)
+        hic = straw(hic = hic_test_file,gr= c("1","5","15"),res = 1e6)
+        cool = cooler(file = mcool_test_file,gr= c("1","5","15"),res = 1e6)
+        expect_true(all(c(all(hic$dat==cool$dat),all(hic$dat==orig_dat$dat),all(cool$dat==orig_dat$dat))))
+        
+        ## test new whether interchr coordinates will be in correct format/order
+        dat = readRDS(inter_chr_test_file)
+        gr.test = parse.gr("5:1-145138636,15:1-107043718")
+        hic = straw(hic = hic_test_file,gr= gr.test,res = 1e6)        
+        expect_true(all(hic$dat==dat$dat))
     })
 })
 

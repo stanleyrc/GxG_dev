@@ -1,4 +1,4 @@
 library(testthat)
-library(GxG)
+#library(GxG)
 
 test_check('GxG')

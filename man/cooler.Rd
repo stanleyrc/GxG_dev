@@ -4,22 +4,14 @@
 \alias{cooler}
 \title{cooler}
 \usage{
-cooler(
-  file,
-  gr = NULL,
-  res = NULL,
-  info = FALSE,
-  field = NULL,
-  nochr = FALSE,
-  mc.cores = 1
-)
+cooler(file, res = NULL, gr = NULL, info = FALSE, mc.cores = 1)
 }
 \arguments{
 \item{file}{path to .cool or m.cool file}
 
-\item{gr}{optional GRanges of intervals to query}
-
 \item{res}{optional resolution to pull}
+
+\item{gr}{optional GRanges of intervals to query}
 
 \item{info}{logical flag (FALSE) specifying whether to return a vector of file info instead of pulling down data, this will include available resolutions (for .mcool format) and fields}
 }
@@ -33,6 +25,6 @@ To find viable resolutions (e.g. for mcool files) use info = TRUE and you will g
 of info, including seqlengths.
 }
 \author{
-Marcin Imielinski
+Marcin Imielinski, Stanley Clarke
 }
 \keyword{cooler}
